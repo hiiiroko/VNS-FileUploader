@@ -12,7 +12,7 @@ const upload = multer({ dest: 'uploads/' });
 app.use(cors());
 app.use(express.json());
 
-const uploadedFiles = [];
+let uploadedFiles = [];
 
 app.post('/upload', upload.single('file'), (req, res) => {
   const file = req.file;
@@ -50,7 +50,6 @@ app.get('/files/:id', (req, res) => {
   }
 });
 
-// New endpoint to fetch all uploaded files
 app.get('/files', (req, res) => {
   res.json(uploadedFiles);
 });

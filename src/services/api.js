@@ -1,4 +1,4 @@
-// src/services/api.js
+// services/api.js
 
 import axios from 'axios';
 
@@ -45,7 +45,6 @@ export const downloadFile = async (fileId) => {
   }
 };
 
-// New function to fetch uploaded files
 export const getUploadedFiles = async () => {
   try {
     const response = await axios.get(`${API_URL}/files`);

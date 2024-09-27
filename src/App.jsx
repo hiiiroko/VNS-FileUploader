@@ -1,11 +1,11 @@
-// src/App.jsx
+// App.jsx
 
 import React, { useState, useEffect } from 'react';
 import UploadArea from './components/UploadArea';
 import FileList from './components/FileList';
 import ControlPanel from './components/ControlPanel';
 import Toast from './components/Toast';
-import { uploadFile, deleteFile, downloadFile } from './services/api';
+import { uploadFile, deleteFile, downloadFile, getUploadedFiles } from './services/api';
 
 function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -14,17 +14,13 @@ function App() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
-  // New state to track deleted file names
-  const [deletedFileNames, setDeletedFileNames] = useState(new Set());
-
   useEffect(() => {
-    // Fetch uploaded files when component mounts
     fetchUploadedFiles();
   }, []);
 
   const fetchUploadedFiles = async () => {
     try {
-      const files = await getUploadedFiles(); // You need to implement this API call
+      const files = await getUploadedFiles();
       setUploadedFiles(files);
     } catch (error) {
       setToastMessage(`获取文件列表失败: ${error.message}`);
@@ -32,8 +28,10 @@ function App() {
   };
 
   const handleFileSelect = (files) => {
-    // Filter out files that have been deleted
-    const newFiles = files.filter(file => !deletedFileNames.has(file.name));
+    const newFiles = files.filter(file => 
+      !uploadedFiles.some(uploadedFile => uploadedFile.name === file.name) &&
+      !selectedFiles.some(selectedFile => selectedFile.name === file.name)
+    );
     setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
   };
 
@@ -59,6 +57,7 @@ function App() {
     setSelectedFiles([]);
     setUploadProgress(0);
     setToastMessage(`上传完成: ${successCount}/${totalFiles} 文件成功上传`);
+    fetchUploadedFiles(); // Refresh the uploaded files list
   };
 
   const handleClear = () => {
@@ -69,7 +68,6 @@ function App() {
     try {
       await deleteFile(fileId);
       setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
-      setDeletedFileNames(prev => new Set(prev).add(fileName));
       setToastMessage('文件已删除');
     } catch (error) {
       setToastMessage(`删除失败: ${error.message}`);
