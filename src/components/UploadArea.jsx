@@ -14,7 +14,7 @@ function UploadArea({ onFileSelect, selectedFiles }) {
 
   return (
     <div 
-      className="border-2 border-dashed border-gray-300 p-4 text-center rounded-lg"
+      className="border-2 border-dashed border-gray-300 p-4 text-center rounded-lg h-96 flex flex-col justify-center items-center"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
@@ -28,7 +28,7 @@ function UploadArea({ onFileSelect, selectedFiles }) {
       />
       <label htmlFor="fileInput" className="cursor-pointer text-blue-500 hover:text-blue-600">选择文件</label>
       {selectedFiles.length > 0 && (
-        <ul className="mt-4 text-left">
+        <ul className="mt-4 text-left w-full overflow-y-auto max-h-64">
           {selectedFiles.map((file, index) => (
             <li key={index} className="mb-2 text-sm">
               <span className="font-semibold">{file.name}</span>
