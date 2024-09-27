@@ -1,3 +1,5 @@
+// src/components/Toast.jsx
+
 import React from 'react';
 
 function Toast({ message, onClose }) {

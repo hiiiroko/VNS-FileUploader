@@ -1,3 +1,5 @@
+// src/components/UploadArea.jsx
+
 import React from 'react';
 import { formatFileSize, formatDate } from '../utils/fileHelpers';
 

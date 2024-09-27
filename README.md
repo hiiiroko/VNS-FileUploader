@@ -9,10 +9,10 @@ file-upload-app
 │  └─ main.js
 ├─ eslint.config.js
 ├─ index.html
+├─ package-lock.json
 ├─ package.json
 ├─ postcss.config.js
 ├─ public
-│  └─ vite.svg
 ├─ server
 │  ├─ index.js
 │  └─ routes
@@ -21,7 +21,6 @@ file-upload-app
 │  ├─ App.css
 │  ├─ App.jsx
 │  ├─ assets
-│  │  └─ react.svg
 │  ├─ components
 │  │  ├─ ControlPanel.jsx
 │  │  ├─ FileList.jsx

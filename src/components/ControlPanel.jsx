@@ -1,3 +1,5 @@
+// src/components/ControlPanel.jsx
+
 import React from 'react';
 
 function ControlPanel({ onUpload, onClear, isUploading, uploadProgress, selectedFilesCount }) {

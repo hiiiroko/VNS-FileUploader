@@ -1,3 +1,5 @@
+// src/components/FileList.jsx
+
 import React from 'react';
 import { formatDate } from '../utils/fileHelpers';
 

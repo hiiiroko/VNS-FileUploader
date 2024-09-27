@@ -1,3 +1,5 @@
+// src/App.jsx
+
 import React, { useState } from 'react';
 import UploadArea from './components/UploadArea';
 import FileList from './components/FileList';
