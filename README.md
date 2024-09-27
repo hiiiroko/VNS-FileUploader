@@ -37,6 +37,3 @@ file-upload-app
 └─ yarn.lock
 
 ```
-
-<img width="1106" alt="客户端外观" src="https://github.com/user-attachments/assets/e30fe726-80a7-4630-b573-608abb7f2442">
-<img width="1103" alt="客户端功能展示" src="https://github.com/user-attachments/assets/01065682-aebd-43c9-beda-877fc30749da">
