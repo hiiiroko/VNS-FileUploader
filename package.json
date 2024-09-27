@@ -8,15 +8,17 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "electron:serve": "concurrently -k \"cross-env BROWSER=none yarn dev\" \"yarn electron:start\"",
+    "electron:serve": "concurrently -k \"cross-env BROWSER=none yarn dev\" \"yarn start-server\" \"yarn electron:start\"",
     "electron:build": "yarn build && electron-builder",
-    "electron:start": "wait-on tcp:5173 && electron ."
+    "electron:start": "wait-on tcp:5173 && electron .",
+    "start-server": "node server/index.js"
   },
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "autoprefixer": "^10.4.20",
     "axios": "^1.7.7",
     "concurrently": "^9.0.1",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "electron": "^32.1.2",
     "electron-builder": "^25.0.5",
