@@ -1,9 +1,11 @@
 // src/components/UploadArea.jsx
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { formatFileSize, formatDate } from '../utils/fileHelpers';
 
 function UploadArea({ onFileSelect, selectedFiles }) {
+  const fileInputRef = useRef(null);
+
   const handleDrop = (e) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
@@ -12,6 +14,11 @@ function UploadArea({ onFileSelect, selectedFiles }) {
 
   const handleDragOver = (e) => {
     e.preventDefault();
+  };
+
+  const handleFileInputChange = (e) => {
+    const files = Array.from(e.target.files);
+    onFileSelect(files);
   };
 
   return (
@@ -24,11 +31,16 @@ function UploadArea({ onFileSelect, selectedFiles }) {
       <input 
         type="file" 
         multiple 
-        onChange={(e) => onFileSelect(Array.from(e.target.files))}
+        onChange={handleFileInputChange}
         className="hidden"
-        id="fileInput"
+        ref={fileInputRef}
       />
-      <label htmlFor="fileInput" className="cursor-pointer text-blue-500 hover:text-blue-600">选择文件</label>
+      <button 
+        onClick={() => fileInputRef.current.click()} 
+        className="cursor-pointer text-blue-500 hover:text-blue-600"
+      >
+        选择文件
+      </button>
       {selectedFiles.length > 0 && (
         <ul className="mt-4 text-left w-full overflow-y-auto max-h-64">
           {selectedFiles.map((file, index) => (

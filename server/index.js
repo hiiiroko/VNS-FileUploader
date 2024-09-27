@@ -3,9 +3,8 @@
 import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
-// import path from 'path';
 import fs from 'fs';
-import process from 'process';
+import path from 'path';
 
 const app = express();
 const upload = multer({ dest: 'uploads/' });
@@ -49,6 +48,11 @@ app.get('/files/:id', (req, res) => {
   } else {
     res.status(404).json({ message: 'File not found' });
   }
+});
+
+// New endpoint to fetch all uploaded files
+app.get('/files', (req, res) => {
+  res.json(uploadedFiles);
 });
 
 const PORT = process.env.PORT || 3000;

@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000'; // 假定服务器运行在3000端口
+const API_URL = 'http://localhost:3000';
 
 export const uploadFile = async (file, onProgress) => {
   const formData = new FormData();
@@ -10,16 +10,16 @@ export const uploadFile = async (file, onProgress) => {
 
   try {
     const response = await axios.post(`${API_URL}/upload`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }, // 直接定义常用的header
+      headers: { 'Content-Type': 'multipart/form-data' },
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-        onProgress(percentCompleted); // 调用传入的回调函数来处理进度
+        onProgress(percentCompleted);
       },
     });
     return response.data;
   } catch (error) {
     console.error('Error uploading file:', error);
-    throw error; // 记录错误后继续抛出
+    throw error;
   }
 };
 
@@ -29,7 +29,7 @@ export const deleteFile = async (fileId) => {
     return response.data;
   } catch (error) {
     console.error('Error deleting file:', error);
-    throw error; // 记录错误后继续抛出
+    throw error;
   }
 };
 
@@ -41,6 +41,17 @@ export const downloadFile = async (fileId) => {
     return response.data;
   } catch (error) {
     console.error('Error downloading file:', error);
-    throw error; // 记录错误后继续抛出
+    throw error;
+  }
+};
+
+// New function to fetch uploaded files
+export const getUploadedFiles = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/files`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching uploaded files:', error);
+    throw error;
   }
 };
