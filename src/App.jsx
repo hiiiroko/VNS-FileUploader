@@ -94,7 +94,7 @@ function App() {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <div className="flex-1 p-4">
+      <div className="w-2/5 p-4">
         <UploadArea onFileSelect={handleFileSelect} selectedFiles={selectedFiles} />
         <ControlPanel 
           onUpload={handleUpload} 
@@ -104,7 +104,7 @@ function App() {
           selectedFilesCount={selectedFiles.length}
         />
       </div>
-      <div className="flex-1 p-4">
+      <div className="w-3/5 p-4">
         <FileList 
           files={uploadedFiles} 
           onDelete={handleDelete} 

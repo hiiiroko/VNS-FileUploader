@@ -11,7 +11,7 @@ const __dirname = path.dirname(__filename);
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: isDev ? 1440 : 1080,  // 在开发模式下增加宽度
+    width: 1080,  // 在开发模式下增加宽度
     height: 720,
     webPreferences: {
       nodeIntegration: false,
@@ -26,7 +26,8 @@ function createWindow() {
   );
 
   if (isDev) {
-    win.webContents.openDevTools({ mode: 'right' });  // 在右侧打开开发者工具
+    // win.webContents.openDevTools({ mode: 'detach' });
+    win.webContents.openDevTools({ mode: 'right' });
   }
 }
 
