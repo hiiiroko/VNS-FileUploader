@@ -1,5 +1,3 @@
-// server/index.js
-
 import express from 'express';
 import multer from 'multer';
 import cors from 'cors';
@@ -13,7 +11,7 @@ const upload = multer({ dest: 'uploads/' });
 app.use(cors());
 app.use(express.json());
 
-const uploadedFiles = [];
+let uploadedFiles = [];
 
 app.post('/upload', (req, res) => {
   let speedLimit = parseInt(req.headers['x-speed-limit']) || Infinity;
@@ -59,6 +57,10 @@ app.post('/upload', (req, res) => {
   });
 });
 
+app.get('/files', (req, res) => {
+  res.json(uploadedFiles);
+});
+
 app.get('/files/:id', (req, res) => {
   const fileId = req.params.id;
   const speedLimit = parseInt(req.query.speedLimit) || Infinity;
@@ -96,6 +98,24 @@ app.get('/files/:id', (req, res) => {
       
       fileStream.pipe(throttle).pipe(res);
     }
+  } else {
+    res.status(404).json({ message: 'File not found' });
+  }
+});
+
+app.delete('/files/:id', (req, res) => {
+  const fileId = req.params.id;
+  const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
+  
+  if (fileIndex !== -1) {
+    const file = uploadedFiles[fileIndex];
+    fs.unlink(file.path, (err) => {
+      if (err) {
+        return res.status(500).json({ error: 'Error deleting file from server' });
+      }
+      uploadedFiles.splice(fileIndex, 1);
+      res.json({ message: 'File deleted successfully' });
+    });
   } else {
     res.status(404).json({ message: 'File not found' });
   }

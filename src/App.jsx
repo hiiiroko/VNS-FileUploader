@@ -1,5 +1,3 @@
-// App.jsx
-
 import React, { useState, useEffect } from 'react';
 import UploadArea from './components/UploadArea';
 import FileList from './components/FileList';
@@ -28,6 +26,7 @@ function App() {
   };
 
   const handleFileSelect = (files) => {
+    // 使用新版的逻辑简化文件选择处理
     const newFiles = files.filter(file => 
       !uploadedFiles.some(uploadedFile => uploadedFile.name === file.name) &&
       !selectedFiles.some(selectedFile => selectedFile.name === file.name)
@@ -43,6 +42,7 @@ function App() {
 
     for (const file of selectedFiles) {
       try {
+        // 使用新版的进度更新逻辑
         const uploadedFile = await uploadFile(file, (progress) => {
           setUploadProgress(Math.round((successCount + progress / 100) / totalFiles * 100));
         });
@@ -57,7 +57,7 @@ function App() {
     setSelectedFiles([]);
     setUploadProgress(0);
     setToastMessage(`上传完成: ${successCount}/${totalFiles} 文件成功上传`);
-    fetchUploadedFiles(); // Refresh the uploaded files list
+    fetchUploadedFiles(); // 刷新上传的文件列表
   };
 
   const handleClear = () => {
@@ -69,6 +69,8 @@ function App() {
       await deleteFile(fileId);
       setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
       setToastMessage('文件已删除');
+      // 如果被删除的文件还在选中的文件里，移除它
+      setSelectedFiles((prev) => prev.filter((file) => file.name !== fileName));
     } catch (error) {
       setToastMessage(`删除失败: ${error.message}`);
     }
