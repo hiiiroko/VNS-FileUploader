@@ -11,11 +11,11 @@ const __dirname = path.dirname(__filename);
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1080,  // 在开发模式下增加宽度
+    height: 720,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
     },
   });
 
@@ -26,7 +26,8 @@ function createWindow() {
   );
 
   if (isDev) {
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools({ mode: 'detach' });
+    win.webContents.openDevTools({ mode: 'right' });
   }
 }
 

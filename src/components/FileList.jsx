@@ -15,7 +15,7 @@ function FileList({ files, onDelete, onDownload }) {
     <div>
       <h2 className="text-xl font-bold mb-4">已上传文件</h2>
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-white">
+        <table className="min-w-full">
           <thead className="bg-gray-100">
             <tr>
               <th className="py-2 px-4 text-left">文件名</th>
@@ -29,9 +29,9 @@ function FileList({ files, onDelete, onDownload }) {
                 <td className="py-2 px-4">
                   <div className="group relative">
                     <span className="font-semibold" title={file.name}>{truncateFileName(file.name)}</span>
-                    <div className="absolute left-0 -top-8 bg-white shadow-md p-2 rounded hidden group-hover:block z-10">
+                    {/* <div className="absolute left-20 -top-10 bg-white bg-opacity-80 text-black bg-opacity-80 shadow-md p-2 rounded hidden group-hover:block z-10">
                       {file.name}
-                    </div>
+                    </div> */}
                   </div>
                 </td>
                 <td className="py-2 px-4 text-gray-600 text-sm">{formatDate(file.uploadedAt)}</td>
