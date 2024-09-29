@@ -10,6 +10,9 @@
     "preview": "vite preview",
     "electron:serve": "concurrently -k \"cross-env BROWSER=none yarn dev\" \"yarn start-server\" \"wait-on tcp:5173 && electron .\"",
     "electron:build": "yarn build && electron-builder",
+    "electron:build:mac": "yarn build && electron-builder --mac",
+    "electron:build:win": "yarn build && electron-builder --win",
+    "electron:build:linux": "yarn build && electron-builder --linux",
     "electron:start": "electron .",
     "start-server": "node server/index.js",
     "clean": "rm -rf node_modules yarn.lock"
