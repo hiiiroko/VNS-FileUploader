@@ -11,11 +11,12 @@ function createWindow() {
     width: 1080,
     height: 720,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
   });
+
 
   const url = isDev
     ? 'http://localhost:5173'
