@@ -1,5 +1,6 @@
-appId: com.your-app-id.app
-productName: Your App Name
+appId: com.github/hiiiroko.VNS-FileUploader
+productName: VNS-FileUploader
+icon: assets/FU.icns
 directories:
   output: dist
   buildResources: build

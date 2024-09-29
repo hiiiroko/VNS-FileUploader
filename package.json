@@ -24,8 +24,6 @@
     "concurrently": "^9.0.1",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
-    "electron": "^32.1.2",
-    "electron-builder": "^25.0.5",
     "electron-is-dev": "^3.0.1",
     "express": "^4.21.0",
     "glob": "^11.0.0",
@@ -44,6 +42,8 @@
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "cz-conventional-changelog": "^3.3.0",
+    "electron": "^32.1.2",
+    "electron-builder": "^25.0.5",
     "eslint": "^9.9.0",
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
@@ -57,11 +57,14 @@
     "files": [
       "dist/**/*",
       "electron/**/*"
-    ]
+    ],
+    "icon": "assets/FU.icns"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "description": "Implemented drag-and-drop image upload functionality for the VNS client.",
+  "author": "H1rk"
 }
