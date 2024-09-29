@@ -1,0 +1,8 @@
+appId: com.your-app-id.app
+productName: Your App Name
+directories:
+  output: dist
+  buildResources: build
+files:
+  - dist/**/*
+  - electron/**/*

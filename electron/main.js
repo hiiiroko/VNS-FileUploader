@@ -1,32 +1,29 @@
-// electron/main.js
-
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import isDev from 'electron-is-dev';
-import process from 'process';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1080,  // 在开发模式下增加宽度
+    width: 1080,
     height: 720,
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
+      nodeIntegration: true,
+      contextIsolation: false,
+      preload: path.join(__dirname, 'preload.js')
     },
   });
 
-  win.loadURL(
-    isDev
-      ? 'http://localhost:5173'  // Vite默认端口
-      : `file://${path.join(__dirname, '../dist/index.html')}`
-  );
+  const url = isDev
+    ? 'http://localhost:5173'
+    : `file://${path.join(__dirname, '../dist/index.html')}`;
+  
+  win.loadURL(url);
 
   if (isDev) {
-    // win.webContents.openDevTools({ mode: 'detach' });
     win.webContents.openDevTools({ mode: 'right' });
   }
 }

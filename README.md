@@ -1,7 +1,7 @@
 # VNS-FileUploader
 
 ```
-file-upload-app
+VNS-FileUploader
 ├─ .env
 ├─ .gitignore
 ├─ README.md
@@ -9,10 +9,8 @@ file-upload-app
 │  └─ main.js
 ├─ eslint.config.js
 ├─ index.html
-├─ package-lock.json
 ├─ package.json
 ├─ postcss.config.js
-├─ public
 ├─ server
 │  ├─ index.js
 │  └─ routes
@@ -20,7 +18,6 @@ file-upload-app
 ├─ src
 │  ├─ App.css
 │  ├─ App.jsx
-│  ├─ assets
 │  ├─ components
 │  │  ├─ ControlPanel.jsx
 │  │  ├─ FileList.jsx
