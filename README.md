@@ -3,10 +3,13 @@
 ```
 VNS-FileUploader
 ├─ .env
+├─ .env.development
 ├─ .gitignore
 ├─ README.md
 ├─ electron
-│  └─ main.js
+│  ├─ main.js
+│  └─ preload.js
+├─ electron-builder.yml
 ├─ eslint.config.js
 ├─ index.html
 ├─ package.json
