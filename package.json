@@ -1,14 +1,14 @@
 {
   "name": "file-upload-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "electron:serve": "concurrently -k \"cross-env BROWSER=none yarn dev\" \"yarn start-server\" \"wait-on tcp:5173 && electron .\"",
+    "electron:serve": "concurrently -k \"cross-env BROWSER=none yarn dev\" \"wait-on tcp:5173 && electron .\"",
     "electron:build": "yarn build && electron-builder",
     "electron:build:mac": "yarn build && electron-builder --mac",
     "electron:build:win": "yarn build && electron-builder --win",
@@ -31,6 +31,7 @@
     "postcss": "^8.4.47",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
     "react-scripts": "^5.0.1",
     "tailwindcss": "^3.4.13",
     "wait-on": "^8.0.1"

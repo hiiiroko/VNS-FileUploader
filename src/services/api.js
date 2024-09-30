@@ -1,8 +1,21 @@
+// src/services/api.js
+
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000';
+// 根据环境变量设置 API URL
+const API_URL = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:3000'
+  : 'http://localhost:3000';
 
+// 创建一个带有默认配置的 axios 实例
+const api = axios.create({
+  baseURL: API_URL,
+  timeout: 5000, // 5 seconds timeout
+});
+
+// 处理 API 错误的函数
 const handleApiError = (error) => {
+  console.error('API Error:', error);
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx
@@ -21,13 +34,14 @@ export const uploadFile = async (file, onProgress) => {
   formData.append('file', file);
 
   try {
-    const response = await axios.post(`${API_URL}/upload`, formData, {
+    const response = await api.post('/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       onUploadProgress: (progressEvent) => {
         const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
         onProgress(percentCompleted);
       },
     });
+    console.log('Upload response:', response.data);
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -36,7 +50,7 @@ export const uploadFile = async (file, onProgress) => {
 
 export const deleteFile = async (fileId) => {
   try {
-    const response = await axios.delete(`${API_URL}/files/${fileId}`);
+    const response = await api.delete(`/files/${fileId}`);
     return response.data;
   } catch (error) {
     handleApiError(error);
@@ -45,7 +59,7 @@ export const deleteFile = async (fileId) => {
 
 export const downloadFile = async (fileId) => {
   try {
-    const response = await axios.get(`${API_URL}/files/${fileId}`, {
+    const response = await api.get(`/files/${fileId}`, {
       responseType: 'blob',
     });
     return response.data;
@@ -56,7 +70,8 @@ export const downloadFile = async (fileId) => {
 
 export const getUploadedFiles = async () => {
   try {
-    const response = await axios.get(`${API_URL}/files`);
+    const response = await api.get('/files');
+    console.log('Get files response:', response.data);
     return response.data;
   } catch (error) {
     handleApiError(error);

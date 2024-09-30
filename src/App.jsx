@@ -1,16 +1,15 @@
 // src/App.jsx
 
 import React, { useState, useEffect } from 'react';
+import { Toaster, toast } from 'react-hot-toast';
 import UploadArea from './components/UploadArea';
 import FileList from './components/FileList';
 import ControlPanel from './components/ControlPanel';
-import Toast from './components/Toast';
 import { uploadFile, deleteFile, downloadFile, getUploadedFiles } from './services/api';
 
 function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [toastMessage, setToastMessage] = useState('');
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -23,13 +22,12 @@ function App() {
       const files = await getUploadedFiles();
       setUploadedFiles(files);
     } catch (error) {
-      setToastMessage(`获取文件列表失败: ${error.message}`);
+      toast.error(`获取文件列表失败: ${error.message}`);
     }
   };
 
   const handleFileSelect = (files) => {
-    // 使用新版的逻辑简化文件选择处理
-    const newFiles = files.filter(file => 
+    const newFiles = files.filter(file =>
       !uploadedFiles.some(uploadedFile => uploadedFile.name === file.name) &&
       !selectedFiles.some(selectedFile => selectedFile.name === file.name)
     );
@@ -44,22 +42,31 @@ function App() {
 
     for (const file of selectedFiles) {
       try {
-        // 使用新版的进度更新逻辑
         const uploadedFile = await uploadFile(file, (progress) => {
           setUploadProgress(Math.round((successCount + progress / 100) / totalFiles * 100));
         });
         setUploadedFiles((prev) => [...prev, uploadedFile]);
         successCount++;
       } catch (error) {
-        setToastMessage(`上传失败: ${file.name} - ${error.message}`);
+        toast.error(`上传失败: ${file.name} - ${error.message}`);
       }
     }
 
     setIsUploading(false);
     setSelectedFiles([]);
     setUploadProgress(0);
-    setToastMessage(`上传完成: ${successCount}/${totalFiles} 文件成功上传`);
-    fetchUploadedFiles(); // 刷新上传的文件列表
+    toast((t) => (
+      <span>
+        上传完成: <b>{successCount}</b>/{totalFiles} 文件成功上传
+        <button
+          className="ml-2 inline-block h-8 rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+          onClick={() => toast.dismiss(t.id)}
+        >
+          关闭
+        </button>
+      </span>
+    ), { duration: null });
+    fetchUploadedFiles();
   };
 
   const handleClear = () => {
@@ -70,11 +77,10 @@ function App() {
     try {
       await deleteFile(fileId);
       setUploadedFiles((prev) => prev.filter((file) => file.id !== fileId));
-      setToastMessage('文件已删除');
-      // 如果被删除的文件还在选中的文件里，移除它
+      toast.success('文件已删除');
       setSelectedFiles((prev) => prev.filter((file) => file.name !== fileName));
     } catch (error) {
-      setToastMessage(`删除失败: ${error.message}`);
+      toast.error(`删除失败: ${error.message}`);
     }
   };
 
@@ -90,7 +96,7 @@ function App() {
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      setToastMessage(`下载失败: ${error.message}`);
+      toast.error(`下载失败: ${error.message}`);
     }
   };
 
@@ -98,22 +104,25 @@ function App() {
     <div className="flex h-screen bg-gray-100">
       <div className="w-2/5 p-4">
         <UploadArea onFileSelect={handleFileSelect} selectedFiles={selectedFiles} />
-        <ControlPanel 
-          onUpload={handleUpload} 
-          onClear={handleClear} 
+        <ControlPanel
+          onUpload={handleUpload}
+          onClear={handleClear}
           isUploading={isUploading}
           uploadProgress={uploadProgress}
           selectedFilesCount={selectedFiles.length}
         />
       </div>
       <div className="w-3/5 p-4">
-        <FileList 
-          files={uploadedFiles} 
-          onDelete={handleDelete} 
-          onDownload={handleDownload} 
+        <FileList
+          files={uploadedFiles}
+          onDelete={handleDelete}
+          onDownload={handleDownload}
         />
       </div>
-      {toastMessage && <Toast message={toastMessage} onClose={() => setToastMessage('')} />}
+      <Toaster
+        position="bottom-right"
+        reverseOrder={false}
+      />
     </div>
   );
 }

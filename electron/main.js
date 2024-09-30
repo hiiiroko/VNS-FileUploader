@@ -4,15 +4,33 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import isDev from 'electron-is-dev';
-import { fork } from 'child_process';
+import http from 'http';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
-let serverProcess;
+let server;
+
+async function importServer() {
+  console.log('Attempting to import server...');
+  try {
+    if (isDev) {
+      console.log('Importing server in development mode');
+      return await import('../server/index.js');
+    } else {
+      const serverPath = path.join(app.getAppPath(), 'server', 'index.js');
+      console.log(`Importing server in production mode from: ${serverPath}`);
+      return await import(serverPath);
+    }
+  } catch (error) {
+    console.error('Error importing server:', error);
+    throw error;
+  }
+}
 
 function createWindow() {
+  console.log('Creating main window...');
   mainWindow = new BrowserWindow({
     width: 1080,
     height: 720,
@@ -27,6 +45,7 @@ function createWindow() {
     ? 'http://localhost:5173'
     : `file://${path.join(__dirname, '../dist/index.html')}`;
   
+  console.log(`Loading URL: ${url}`);
   mainWindow.loadURL(url);
 
   if (isDev) {
@@ -38,19 +57,23 @@ function createWindow() {
   });
 }
 
-function startServer() {
-  const serverPath = isDev
-    ? path.join(__dirname, '../server/index.js')
-    : path.join(process.resourcesPath, 'server/index.js');
-
-  serverProcess = fork(serverPath);
-
-  serverProcess.on('error', (error) => {
-    console.error('Failed to start server process:', error);
-  });
+async function startServer() {
+  try {
+    console.log('Starting server...');
+    const { createServer } = await importServer();
+    const app = createServer();
+    server = http.createServer(app);
+    const PORT = process.env.PORT || 3000;
+    server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+  }
 }
 
 app.whenReady().then(() => {
+  console.log('App is ready, creating window and starting server...');
   createWindow();
   startServer();
 });
@@ -68,7 +91,8 @@ app.on('activate', () => {
 });
 
 app.on('quit', () => {
-  if (serverProcess) {
-    serverProcess.kill();
+  if (server) {
+    console.log('Closing server...');
+    server.close();
   }
 });

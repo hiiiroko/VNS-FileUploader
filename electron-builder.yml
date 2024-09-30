@@ -1,9 +1,37 @@
-appId: com.github/hiiiroko.VNS-FileUploader
-productName: VNS-FileUploader
-icon: assets/FU.icns
-directories:
-  output: dist
-  buildResources: build
-files:
-  - dist/**/*
-  - electron/**/*
+{
+  "appId": "com.yourcompany.fileuploadapp",
+  "productName": "File Upload App",
+  "directories": {
+    "output": "dist"
+  },
+  "files": [
+    "dist/**/*",
+    "electron/**/*",
+    "server/**/*",
+    "package.json"
+  ],
+  "mac": {
+    "target": ["dmg", "zip"],
+    "category": "public.app-category.utilities"
+  },
+  "dmg": {
+    "contents": [
+      {
+        "x": 130,
+        "y": 220
+      },
+      {
+        "x": 410,
+        "y": 220,
+        "type": "link",
+        "path": "/Applications"
+      }
+    ]
+  },
+  "win": {
+    "target": ["nsis", "zip"]
+  },
+  "linux": {
+    "target": ["AppImage", "deb"]
+  }
+}
