@@ -89,7 +89,7 @@ function App() {
     toast(
       (t) => (
         <span>
-          上传完成: <b>{successCount}</b>/{totalFiles} 文件成功上传
+          上传完成: {successCount}/{totalFiles} 文件成功上传
           <button
             className="ml-2 inline-block h-8 rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:outline-none focus:shadow-outline"
             onClick={() => toast.dismiss(t.id)}
