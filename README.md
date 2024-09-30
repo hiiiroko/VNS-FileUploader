@@ -7,35 +7,42 @@ VNS-FileUploader
 ├─ .env.development
 ├─ .gitignore
 ├─ README.md
-├─ assets
-│  ├─ FU.icns
-│  └─ FU.ico
-├─ electron
-│  ├─ main.js
-│  └─ preload.js
+├─ client
+│  ├─ .env
+│  ├─ assets
+│  │  ├─ FU.icns
+│  │  └─ FU.ico
+│  ├─ electron
+│  │  ├─ main.js
+│  │  └─ preload.js
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package.json
+│  ├─ postcss.config.js
+│  ├─ src
+│  │  ├─ App.jsx
+│  │  ├─ components
+│  │  │  ├─ ControlPanel.jsx
+│  │  │  ├─ FileList.jsx
+│  │  │  └─ UploadArea.jsx
+│  │  ├─ index.css
+│  │  ├─ main.jsx
+│  │  ├─ services
+│  │  │  └─ api.js
+│  │  └─ utils
+│  │     └─ fileHelpers.js
+│  ├─ tailwind.config.js
+│  ├─ vite.config.js
+│  └─ yarn.lock
 ├─ electron-builder.yml
-├─ eslint.config.js
-├─ index.html
 ├─ package.json
-├─ postcss.config.js
+├─ restructure.sh
 ├─ server
 │  ├─ index.js
-│  └─ routes
-│     └─ upload.js
-├─ src
-│  ├─ App.jsx
-│  ├─ components
-│  │  ├─ ControlPanel.jsx
-│  │  ├─ FileList.jsx
-│  │  └─ UploadArea.jsx
-│  ├─ index.css
-│  ├─ main.jsx
-│  ├─ services
-│  │  └─ api.js
-│  └─ utils
-│     └─ fileHelpers.js
-├─ tailwind.config.js
-├─ vite.config.js
+│  ├─ package.json
+│  ├─ routes
+│  │  └─ upload.js
+│  └─ yarn.lock
 └─ yarn.lock
 
 ```

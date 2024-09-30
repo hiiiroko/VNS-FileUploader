@@ -1,31 +1,32 @@
-// src/services/api.js
+// client/src/services/api.js
 
 import axios from 'axios';
 
-// 根据环境变量设置 API URL
-const API_URL = process.env.NODE_ENV === 'development' 
-  ? 'http://localhost:3000'
-  : 'http://localhost:3000';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3000';
 
-// 创建一个带有默认配置的 axios 实例
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 5000, // 5 seconds timeout
+  timeout: 5000,
 });
 
-// 处理 API 错误的函数
 const handleApiError = (error) => {
   console.error('API Error:', error);
   if (error.response) {
-    // The request was made and the server responded with a status code
-    // that falls out of the range of 2xx
     throw new Error(error.response.data.message || 'Server error');
   } else if (error.request) {
-    // The request was made but no response was received
-    throw new Error('No response from server. Please try again later.');
+    throw new Error('No response from server. Please check if the server is running.');
   } else {
-    // Something happened in setting up the request that triggered an Error
     throw new Error('Error setting up the request. Please try again.');
+  }
+};
+
+export const checkServerConnection = async () => {
+  try {
+    await api.get('/');
+    return true;
+  } catch (error) {
+    console.error('Server connection check failed:', error);
+    return false;
   }
 };
 

@@ -2,11 +2,11 @@
   "name": "file-upload-app",
   "version": "1.0.1",
   "scripts": {
-    "install-all": "yarn install && cd client && yarn install && cd ../server && yarn install",
+    "install-all": "yarn install && cd client && yarn install && cd ../server && yarn install && cd ..",
     "start-server": "cd server && yarn start",
     "start-client": "cd client && yarn dev",
     "build-client": "cd client && yarn build",
-    "start": "concurrently \"yarn start-server\" \"yarn start-client\""
+    "start": "concurrently \"cd client && yarn electron:serve\""
   },
   "devDependencies": {
     "concurrently": "^9.0.1"

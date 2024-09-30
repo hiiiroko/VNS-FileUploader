@@ -1,4 +1,4 @@
-// src/components/UploadArea.jsx
+// client/src/components/UploadArea.jsx
 
 import React, { useRef } from 'react';
 import { formatFileSize, formatDate } from '../utils/fileHelpers';
