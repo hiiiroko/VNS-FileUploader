@@ -7,6 +7,10 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import createHttpError from 'http-errors';
+import asyncHandler from 'express-async-handler';
+import helmet from 'helmet';
+import logger from './utils/logger.js'; // 添加 logger 导入
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,7 +29,7 @@ if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-console.log(`Upload directory: ${uploadDir}`);
+logger.info(`Upload directory: ${uploadDir}`);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -40,21 +44,28 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-app.use(cors());
+// 使用 helmet 中间件
+app.use(helmet());
+
+// 设置 CORS 选项
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions)); // 使用带有选项的 cors
+
 app.use(express.json());
 
 let uploadedFiles = [];
 
-app.post('/upload', upload.single('file'), (req, res) => {
-  console.log('Received upload request');
+app.post('/upload', upload.single('file'), asyncHandler(async (req, res) => {
   const file = req.file;
   if (!file) {
-    console.log('No file received');
-    return res.status(400).send('No file uploaded.');
+    logger.warn('No file received');
+    throw createHttpError(400, 'No file uploaded.');
   }
   // 使用 Buffer 来正确处理中文文件名
   const originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
-  console.log(`File received: ${originalname}`);
   const fileInfo = {
     id: Date.now().toString(),
     name: originalname,
@@ -63,17 +74,17 @@ app.post('/upload', upload.single('file'), (req, res) => {
     uploadedAt: new Date(),
   };
   uploadedFiles.push(fileInfo);
-  console.log(`File info added to list: ${JSON.stringify(fileInfo)}`);
+  logger.info(`File uploaded: ${fileInfo.name}`);
   res.json(fileInfo);
-});
+}));
 
-app.get('/files', (req, res) => {
-  console.log('Received request for file list');
-  console.log(`Sending file list: ${JSON.stringify(uploadedFiles)}`);
+app.get('/files', asyncHandler(async (req, res) => {
+  logger.info('Received request for file list');
+  logger.info(`Sending file list: ${JSON.stringify(uploadedFiles)}`);
   res.json(uploadedFiles);
-});
+}));
 
-app.delete('/files/:id', (req, res) => {
+app.delete('/files/:id', asyncHandler(async (req, res) => {
   const fileId = req.params.id;
   const fileIndex = uploadedFiles.findIndex((file) => file.id === fileId);
   if (fileIndex !== -1) {
@@ -82,33 +93,47 @@ app.delete('/files/:id', (req, res) => {
     uploadedFiles.splice(fileIndex, 1);
     res.json({ message: 'File deleted successfully' });
   } else {
-    res.status(404).json({ message: 'File not found' });
+    logger.warn('File not found');
+    throw createHttpError(404, 'File not found');
   }
-});
+}));
 
-app.get('/files/:id', (req, res) => {
+app.get('/files/:id', asyncHandler(async (req, res) => {
   const fileId = req.params.id;
   const file = uploadedFiles.find((file) => file.id === fileId);
   if (file) {
     res.download(file.path, file.name);
   } else {
-    res.status(404).json({ message: 'File not found' });
+    logger.warn('File not found');
+    throw createHttpError(404, 'File not found');
   }
-});
+}));
 
 app.get('/', (req, res) => {
   res.send('Server is running');
 });
 
 const server = app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  logger.info(`Server is running on http://localhost:${PORT}`);
 });
 
 process.on('SIGINT', () => {
-  console.log('Shutting down server...');
+  logger.info('Shutting down server...');
   server.close(() => {
-    console.log('Server shut down');
+    logger.info('Server shut down');
     process.exit(0);
+  });
+});
+
+// 错误处理中间件
+app.use((err, req, res, next) => {
+  logger.error(err.stack);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    error: {
+      message: err.message || 'Internal Server Error',
+      stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
+    },
   });
 });
 
