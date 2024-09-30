@@ -1,4 +1,4 @@
-// src/components/ControlPanel.jsx
+// client/src/components/ControlPanel.jsx
 
 import React from 'react';
 
@@ -6,20 +6,24 @@ function ControlPanel({ onUpload, onClear, isUploading, uploadProgress, selected
   return (
     <div className="mt-4">
       <div className="flex justify-between mb-2">
-        <button 
+        <button
           onClick={onUpload}
           disabled={isUploading || selectedFilesCount === 0}
           className={`bg-blue-500 text-white px-4 py-2 rounded ${
-            (isUploading || selectedFilesCount === 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-blue-600'
+            isUploading || selectedFilesCount === 0
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:bg-blue-600'
           }`}
         >
           {isUploading ? '上传中...' : '上传文件'}
         </button>
-        <button 
+        <button
           onClick={onClear}
           disabled={isUploading || selectedFilesCount === 0}
           className={`bg-orange-500 text-white px-4 py-2 rounded ${
-            (isUploading || selectedFilesCount === 0) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-orange-600'
+            isUploading || selectedFilesCount === 0
+              ? 'opacity-50 cursor-not-allowed'
+              : 'hover:bg-orange-600'
           }`}
         >
           清空文件
@@ -27,9 +31,9 @@ function ControlPanel({ onUpload, onClear, isUploading, uploadProgress, selected
       </div>
       {isUploading && (
         <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-          <div 
-            className="bg-blue-600 h-2.5 rounded-full" 
-            style={{width: `${uploadProgress}%`}}
+          <div
+            className="bg-blue-600 h-2.5 rounded-full"
+            style={{ width: `${uploadProgress}%` }}
           ></div>
         </div>
       )}

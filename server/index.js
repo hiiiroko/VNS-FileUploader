@@ -6,103 +6,147 @@ import cors from 'cors';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { app } from 'electron';
+import dotenv from 'dotenv';
+import createHttpError from 'http-errors';
+import asyncHandler from 'express-async-handler';
+import helmet from 'helmet';
+import logger from './utils/logger.js'; // 添加 logger 导入
+import rateLimit from 'express-rate-limit'; // 添加 rateLimit 导入
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export function createServer() {
-  const expressApp = express();
-  
-  // 确定上传目录
-  const uploadDir = app.isPackaged 
-    ? path.join(process.resourcesPath, 'uploads')
-    : path.join(__dirname, 'uploads');
+// Load environment variables
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
-  // 确保上传目录存在
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-  console.log(`Upload directory: ${uploadDir}`);
+// 确定上传目录
+const uploadDir = path.join(__dirname, 'uploads');
 
-  const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, uploadDir)
-    },
-    filename: function (req, file, cb) {
-      // 使用 Buffer 来正确处理中文文件名
-      const originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
-      cb(null, Date.now() + '-' + originalname)
-    }
-  });
+// 确保上传目录存在
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
-  const upload = multer({ storage: storage });
+logger.info(`Upload directory: ${uploadDir}`);
 
-  expressApp.use(cors());
-  expressApp.use(express.json());
-
-  let uploadedFiles = [];
-
-  expressApp.post('/upload', upload.single('file'), (req, res) => {
-    console.log('Received upload request');
-    const file = req.file;
-    if (!file) {
-      console.log('No file received');
-      return res.status(400).send('No file uploaded.');
-    }
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
     // 使用 Buffer 来正确处理中文文件名
     const originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
-    console.log(`File received: ${originalname}`);
-    const fileInfo = {
-      id: Date.now().toString(),
-      name: originalname,
-      path: file.path,
-      size: file.size,
-      uploadedAt: new Date(),
-    };
-    uploadedFiles.push(fileInfo);
-    console.log(`File info added to list: ${JSON.stringify(fileInfo)}`);
-    res.json(fileInfo);
-  });
+    cb(null, Date.now() + '-' + originalname);
+  },
+});
 
-  expressApp.get('/files', (req, res) => {
-    console.log('Received request for file list');
-    console.log(`Sending file list: ${JSON.stringify(uploadedFiles)}`);
-    res.json(uploadedFiles);
-  });
+// 设置文件上传大小限制
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 限制文件大小为 5MB
+});
 
-  expressApp.delete('/files/:id', (req, res) => {
-    const fileId = req.params.id;
-    const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
-    if (fileIndex !== -1) {
-      const file = uploadedFiles[fileIndex];
-      fs.unlinkSync(file.path);
-      uploadedFiles.splice(fileIndex, 1);
-      res.json({ message: 'File deleted successfully' });
-    } else {
-      res.status(404).json({ message: 'File not found' });
-    }
-  });
+// 使用 helmet 中间件
+app.use(helmet());
 
-  expressApp.get('/files/:id', (req, res) => {
-    const fileId = req.params.id;
-    const file = uploadedFiles.find(file => file.id === fileId);
-    if (file) {
-      res.download(file.path, file.name);
-    } else {
-      res.status(404).json({ message: 'File not found' });
-    }
-  });
+// 设置速率限制
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // 限制每个 IP 15 分钟内最多 100 个请求
+});
+app.use(limiter); // 应用速率限制中间件
 
-  return expressApp;
-}
+// 设置 CORS 选项
+const corsOptions = {
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions)); // 使用带有选项的 cors
 
-// 如果直接运行此文件，启动服务器
-if (import.meta.url === `file://${process.argv[1]}`) {
-  const PORT = process.env.PORT || 3000;
-  const app = createServer();
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.use(express.json());
+
+let uploadedFiles = [];
+
+app.post('/upload', upload.single('file'), asyncHandler(async (req, res) => {
+  const file = req.file;
+  if (!file) {
+    logger.warn('No file received');
+    throw createHttpError(400, 'No file uploaded.');
+  }
+  // 使用 Buffer 来正确处理中文文件名
+  const originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
+  const fileInfo = {
+    id: Date.now().toString(),
+    name: originalname,
+    path: file.path,
+    size: file.size,
+    uploadedAt: new Date(),
+  };
+  uploadedFiles.push(fileInfo);
+  logger.info(`File uploaded: ${fileInfo.name}`);
+  res.json(fileInfo);
+}));
+
+app.get('/files', asyncHandler(async (req, res) => {
+  logger.info('Received request for file list');
+  logger.info(`Sending file list: ${JSON.stringify(uploadedFiles)}`);
+  res.json(uploadedFiles);
+}));
+
+app.delete('/files/:id', asyncHandler(async (req, res) => {
+  const fileId = req.params.id;
+  const fileIndex = uploadedFiles.findIndex((file) => file.id === fileId);
+  if (fileIndex !== -1) {
+    const file = uploadedFiles[fileIndex];
+    fs.unlinkSync(file.path);
+    uploadedFiles.splice(fileIndex, 1);
+    res.json({ message: 'File deleted successfully' });
+  } else {
+    logger.warn('File not found');
+    throw createHttpError(404, 'File not found');
+  }
+}));
+
+app.get('/files/:id', asyncHandler(async (req, res) => {
+  const fileId = req.params.id;
+  const file = uploadedFiles.find((file) => file.id === fileId);
+  if (file) {
+    res.download(file.path, file.name);
+  } else {
+    logger.warn('File not found');
+    throw createHttpError(404, 'File not found');
+  }
+}));
+
+app.get('/', (req, res) => {
+  res.send('Server is running');
+});
+
+const server = app.listen(PORT, () => {
+  logger.info(`Server is running on http://localhost:${PORT}`);
+});
+
+process.on('SIGINT', () => {
+  logger.info('Shutting down server...');
+  server.close(() => {
+    logger.info('Server shut down');
+    process.exit(0);
   });
-}
+});
+
+// 错误处理中间件
+app.use((err, req, res, next) => {
+  logger.error(err.stack);
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    error: {
+      message: err.message || 'Internal Server Error',
+      stack: process.env.NODE_ENV === 'production' ? '🥞' : err.stack,
+    },
+  });
+});
+
+export default app;

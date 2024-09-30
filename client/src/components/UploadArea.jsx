@@ -1,4 +1,4 @@
-// src/components/UploadArea.jsx
+// client/src/components/UploadArea.jsx
 
 import React, { useRef } from 'react';
 import { formatFileSize, formatDate } from '../utils/fileHelpers';
@@ -22,21 +22,21 @@ function UploadArea({ onFileSelect, selectedFiles }) {
   };
 
   return (
-    <div 
+    <div
       className="border-2 border-dashed border-gray-300 p-4 text-center rounded-lg h-96 flex flex-col justify-center items-center"
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >
       <p className="text-gray-600 mb-2">将文件拖到这里，或者</p>
-      <input 
-        type="file" 
-        multiple 
+      <input
+        type="file"
+        multiple
         onChange={handleFileInputChange}
         className="hidden"
         ref={fileInputRef}
       />
-      <button 
-        onClick={() => fileInputRef.current.click()} 
+      <button
+        onClick={() => fileInputRef.current.click()}
         className="cursor-pointer text-blue-500 hover:text-blue-600"
       >
         选择文件

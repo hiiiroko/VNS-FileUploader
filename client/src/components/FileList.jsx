@@ -1,4 +1,4 @@
-// src/components/FileList.jsx
+// client/src/components/FileList.jsx
 
 import React from 'react';
 import { formatDate } from '../utils/fileHelpers';
@@ -28,7 +28,9 @@ function FileList({ files, onDelete, onDownload }) {
               <tr key={file.id} className="border-b">
                 <td className="py-2 px-4">
                   <div className="group relative">
-                    <span className="font-semibold" title={file.name}>{truncateFileName(file.name)}</span>
+                    <span className="font-semibold" title={file.name}>
+                      {truncateFileName(file.name)}
+                    </span>
                     {/* <div className="absolute left-20 -top-10 bg-white bg-opacity-80 text-black bg-opacity-80 shadow-md p-2 rounded hidden group-hover:block z-10">
                       {file.name}
                     </div> */}

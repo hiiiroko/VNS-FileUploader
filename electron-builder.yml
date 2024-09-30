@@ -1,3 +1,5 @@
+# electron-builder.yml
+
 {
   "appId": "com.yourcompany.fileuploadapp",
   "productName": "File Upload App",
