@@ -11,6 +11,7 @@ import createHttpError from 'http-errors';
 import asyncHandler from 'express-async-handler';
 import helmet from 'helmet';
 import logger from './utils/logger.js'; // 添加 logger 导入
+import rateLimit from 'express-rate-limit'; // 添加 rateLimit 导入
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -42,10 +43,21 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+// 设置文件上传大小限制
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 } // 限制文件大小为 5MB
+});
 
 // 使用 helmet 中间件
 app.use(helmet());
+
+// 设置速率限制
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // 限制每个 IP 15 分钟内最多 100 个请求
+});
+app.use(limiter); // 应用速率限制中间件
 
 // 设置 CORS 选项
 const corsOptions = {
