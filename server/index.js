@@ -29,13 +29,13 @@ console.log(`Upload directory: ${uploadDir}`);
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, uploadDir)
+    cb(null, uploadDir);
   },
   filename: function (req, file, cb) {
     // 使用 Buffer 来正确处理中文文件名
     const originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
-    cb(null, Date.now() + '-' + originalname)
-  }
+    cb(null, Date.now() + '-' + originalname);
+  },
 });
 
 const upload = multer({ storage: storage });
@@ -75,7 +75,7 @@ app.get('/files', (req, res) => {
 
 app.delete('/files/:id', (req, res) => {
   const fileId = req.params.id;
-  const fileIndex = uploadedFiles.findIndex(file => file.id === fileId);
+  const fileIndex = uploadedFiles.findIndex((file) => file.id === fileId);
   if (fileIndex !== -1) {
     const file = uploadedFiles[fileIndex];
     fs.unlinkSync(file.path);
@@ -88,7 +88,7 @@ app.delete('/files/:id', (req, res) => {
 
 app.get('/files/:id', (req, res) => {
   const fileId = req.params.id;
-  const file = uploadedFiles.find(file => file.id === fileId);
+  const file = uploadedFiles.find((file) => file.id === fileId);
   if (file) {
     res.download(file.path, file.name);
   } else {

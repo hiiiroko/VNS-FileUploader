@@ -1,20 +1,19 @@
 {
   "name": "file-upload-app",
   "version": "1.0.1",
+  "private": true,
+  "license": "MIT",
   "scripts": {
     "install-all": "yarn install && cd client && yarn install && cd ../server && yarn install && cd ..",
     "start-server": "cd server && yarn start",
     "start-client": "cd client && yarn dev",
     "build-client": "cd client && yarn build",
-    "start": "concurrently \"cd client && yarn electron:serve\""
+    "start": "concurrently \"cd server && yarn start\" \"cd client && yarn dev\"",
+    "start-electron": "concurrently \"cd server && yarn start\" \"cd client && yarn electron:serve\"",
+    "format": "prettier --write \"**/*.{js,jsx,json,md}\""
   },
   "devDependencies": {
     "concurrently": "^9.0.1",
-    "cz-conventional-changelog": "^3.3.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+    "prettier": "^2.8.8"
   }
 }

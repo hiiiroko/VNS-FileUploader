@@ -5,7 +5,13 @@ import { Toaster, toast } from 'react-hot-toast';
 import UploadArea from './components/UploadArea';
 import FileList from './components/FileList';
 import ControlPanel from './components/ControlPanel';
-import { uploadFile, deleteFile, downloadFile, getUploadedFiles, checkServerConnection } from './services/api';
+import {
+  uploadFile,
+  deleteFile,
+  downloadFile,
+  getUploadedFiles,
+  checkServerConnection,
+} from './services/api';
 
 function App() {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -50,11 +56,12 @@ function App() {
   };
 
   const handleFileSelect = (files) => {
-    const newFiles = files.filter(file =>
-      !uploadedFiles.some(uploadedFile => uploadedFile.name === file.name) &&
-      !selectedFiles.some(selectedFile => selectedFile.name === file.name)
+    const newFiles = files.filter(
+      (file) =>
+        !uploadedFiles.some((uploadedFile) => uploadedFile.name === file.name) &&
+        !selectedFiles.some((selectedFile) => selectedFile.name === file.name)
     );
-    setSelectedFiles(prevFiles => [...prevFiles, ...newFiles]);
+    setSelectedFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
   const handleUpload = async () => {
@@ -66,7 +73,7 @@ function App() {
     for (const file of selectedFiles) {
       try {
         const uploadedFile = await uploadFile(file, (progress) => {
-          setUploadProgress(Math.round((successCount + progress / 100) / totalFiles * 100));
+          setUploadProgress(Math.round(((successCount + progress / 100) / totalFiles) * 100));
         });
         setUploadedFiles((prev) => [...prev, uploadedFile]);
         successCount++;
@@ -79,17 +86,20 @@ function App() {
     setIsUploading(false);
     setSelectedFiles([]);
     setUploadProgress(0);
-    toast((t) => (
-      <span>
-        上传完成: <b>{successCount}</b>/{totalFiles} 文件成功上传
-        <button
-          className="ml-2 inline-block h-8 rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:outline-none focus:shadow-outline"
-          onClick={() => toast.dismiss(t.id)}
-        >
-          关闭
-        </button>
-      </span>
-    ), { duration: null });
+    toast(
+      (t) => (
+        <span>
+          上传完成: <b>{successCount}</b>/{totalFiles} 文件成功上传
+          <button
+            className="ml-2 inline-block h-8 rounded bg-blue-500 px-3 py-1 text-sm text-white hover:bg-blue-700 focus:outline-none focus:shadow-outline"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            关闭
+          </button>
+        </span>
+      ),
+      { duration: null }
+    );
     fetchUploadedFiles();
   };
 
@@ -155,16 +165,9 @@ function App() {
         />
       </div>
       <div className="w-3/5 p-4">
-        <FileList
-          files={uploadedFiles}
-          onDelete={handleDelete}
-          onDownload={handleDownload}
-        />
+        <FileList files={uploadedFiles} onDelete={handleDelete} onDownload={handleDownload} />
       </div>
-      <Toaster
-        position="bottom-right"
-        reverseOrder={false}
-      />
+      <Toaster position="bottom-right" reverseOrder={false} />
     </div>
   );
 }

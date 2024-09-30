@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 let mainWindow;
-let serverProcess; 
+let serverProcess;
 
 function createWindow() {
   console.log('Creating main window...');
@@ -20,14 +20,14 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
     },
   });
 
   const url = isDev
     ? 'http://localhost:5173'
     : `file://${path.join(__dirname, '../dist/index.html')}`;
-  
+
   console.log(`Loading URL: ${url}`);
   mainWindow.loadURL(url);
 
@@ -44,7 +44,7 @@ function startServer() {
   console.log('Starting server...');
   const serverPath = path.join(__dirname, '..', '..', 'server', 'index.js');
   serverProcess = fork(serverPath);
-  
+
   serverProcess.on('message', (message) => {
     console.log('Server message:', message);
   });
