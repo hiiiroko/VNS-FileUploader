@@ -14,7 +14,7 @@
     "electron:build:win": "yarn build && electron-builder --win",
     "electron:build:linux": "yarn build && electron-builder --linux",
     "electron:start": "electron .",
-    "start-server": "node server/index.js",
+    "start-server": "node ../server/index.js",
     "clean": "rm -rf node_modules yarn.lock"
   },
   "dependencies": {
