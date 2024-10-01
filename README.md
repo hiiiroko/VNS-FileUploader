@@ -28,17 +28,47 @@ VNS-FileUploader 是一个基于 Electron 和 React 的跨平台文件上传应�
 
 ```
 VNS-FileUploader
+├─ .gitignore
+├─ .prettierrc
+├─ README.md
 ├─ client
+│  ├─ .env.development
+│  ├─ assets
+│  │  ├─ FU.icns
+│  │  └─ FU.ico
 │  ├─ electron
 │  │  ├─ main.js
 │  │  └─ preload.js
-│  └─ src
-│     ├─ components
-│     ├─ services
-│     └─ utils
-└─ server
-   ├─ routes
-   └─ utils
+│  ├─ eslint.config.js
+│  ├─ index.html
+│  ├─ package.json
+│  ├─ postcss.config.js
+│  ├─ src
+│  │  ├─ App.jsx
+│  │  ├─ components
+│  │  │  ├─ ControlPanel.jsx
+│  │  │  ├─ FileList.jsx
+│  │  │  └─ UploadArea.jsx
+│  │  ├─ index.css
+│  │  ├─ main.jsx
+│  │  ├─ services
+│  │  │  └─ api.js
+│  │  └─ utils
+│  │     └─ fileHelpers.js
+│  ├─ tailwind.config.js
+│  ├─ vite.config.js
+│  └─ yarn.lock
+├─ electron-builder.yml
+├─ package.json
+├─ restructure.sh
+├─ server
+│  ├─ index.js
+│  ├─ package.json
+│  ├─ utils
+│  │  └─ logger.js
+│  └─ yarn.lock
+└─ yarn.lock
+
 ```
 
 ## ToDevs: 开发环境设置
