@@ -1,20 +1,19 @@
 // server/index.js
 
-import express from 'express';
-import multer from 'multer';
-import cors from 'cors';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import dotenv from 'dotenv';
-import createHttpError from 'http-errors';
-import asyncHandler from 'express-async-handler';
-import helmet from 'helmet';
-import logger from './utils/logger.js'; // 添加 logger 导入
-import rateLimit from 'express-rate-limit'; // 添加 rateLimit 导入
+// 使用 CommonJS 语法导入模块
+const express = require('express');
+const multer = require('multer');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
+const createHttpError = require('http-errors');
+const asyncHandler = require('express-async-handler');
+const helmet = require('helmet');
+const logger = require('./utils/logger.js'); // 修改为 CommonJS 导入
+const rateLimit = require('express-rate-limit');
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// 移除 __filename 和 __dirname 的定义，因为它们在 CommonJS 中是全局可用的
 
 // Load environment variables
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
@@ -149,4 +148,5 @@ app.use((err, req, res, next) => {
   });
 });
 
-export default app;
+// 使用 CommonJS 导出
+module.exports = app;

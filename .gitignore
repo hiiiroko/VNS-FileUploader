@@ -17,6 +17,8 @@ node_modules
 dist
 dist-ssr
 *.local
+*.exe
+file-upload-server-macos
 
 # Editor directories and files
 .vscode/*

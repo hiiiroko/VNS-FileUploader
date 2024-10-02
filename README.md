@@ -81,6 +81,7 @@ VNS-FileUploader
 
 2. 安装依赖：
    ```
+   corepack enable
    yarn install-all
    ```
 

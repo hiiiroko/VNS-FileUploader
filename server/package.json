@@ -1,7 +1,6 @@
 {
   "name": "file-upload-app-server",
   "version": "1.0.3",
-  "type": "module",
   "main": "index.js",
   "bin": "index.js",
   "engines": {
@@ -9,7 +8,7 @@
   },
   "scripts": {
     "start": "node index.js",
-    "build": "pkg . --no-esm --targets node16-win-x64,node16-macos-x64 --output file-upload-server"
+    "build": "pkg . --targets node16-win-x64,node16-macos-x64 --output file-upload-server"
   },
   "dependencies": {
     "cors": "^2.8.5",
